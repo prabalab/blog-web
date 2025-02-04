@@ -9,6 +9,14 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+const jwt = require("jsonwebtoken");
+
+const secretKey = process.env.JWT_SECRET;
+if (!secretKey) {
+  console.error("ERROR: Missing JWT_SECRET. Set it in Render environment variables.");
+  process.exit(1);
+}
+
 // Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
