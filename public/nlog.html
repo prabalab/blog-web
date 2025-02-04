@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React Login with JWT</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/react-hook-form@7.43.0/dist/index.umd.js"></script>
+    <style>
+        .container {
+            width: 300px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 2px 2px 10px #ddd;
+            text-align: center;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        p {
+            color: red;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+        const { useForm } = ReactHookForm;
+
+        function App() {
+            const [token, setToken] = useState(localStorage.getItem("token") || null);
+            const [protectedData, setProtectedData] = useState("");
+
+            return (
+                <div>
+                    <h1>JWT Auth App</h1>
+                    {token ? (
+                        <ProtectedComponent token={token} setToken={setToken} setProtectedData={setProtectedData} protectedData={protectedData} />
+                    ) : (
+                        <LoginComponent setToken={setToken} />
+                    )}
+                </div>
+            );
+        }
+
+        function LoginComponent({ setToken }) {
+            const { register, handleSubmit, formState: { errors } } = useForm();
+
+            const onSubmit = async (data) => {
+                try {
+                    const response = await fetch("/api/auth/login", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(data),
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        localStorage.setItem("token", result.token);
+                        setToken(result.token);
+                        alert("Login successful");
+                    } else {
+                        alert(result.message || "Login failed");
+                    }
+                } catch (error) {
+                    alert("Error connecting to server");
+                    console.error("Error:", error);
+                }
+            };
+
+            return (
+                <div className="container">
+                    <h2>Login</h2>
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        <div>
+                            <label>Email:</label>
+                            <input
+                                type="email"
+                                {...register("email", { required: "Email is required" })}
+                            />
+                            {errors.email && <p>{errors.email.message}</p>}
+                        </div>
+
+                        <div>
+                            <label>Password:</label>
+                            <input
+                                type="password"
+                                {...register("password", { required: "Password is required" })}
+                            />
+                            {errors.password && <p>{errors.password.message}</p>}
+                        </div>
+
+                        <button type="submit">Login</button>
+                    </form>
+                </div>
+            );
+        }
+
+        function ProtectedComponent({ token, setToken, setProtectedData, protectedData }) {
+            const fetchProtectedData = async () => {
+                try {
+                    const response = await fetch("/protected-route", {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        setProtectedData(result.message);
+                    } else {
+                        alert(result.message || "Access denied");
+                    }
+                } catch (error) {
+                    alert("Error connecting to server");
+                    console.error("Error:", error);
+                }
+            };
+
+            const handleLogout = () => {
+                localStorage.removeItem("token");
+                setToken(null);
+                setProtectedData("");
+            };
+
+            return (
+                <div className="container">
+                    <h2>Protected Page</h2>
+                    <button onClick={fetchProtectedData}>Get Protected Data</button>
+                    <p>{protectedData}</p>
+                    <button onClick={handleLogout}>Logout</button>
+                </div>
+            );
+        }
+
+        const rootElement = document.getElementById("root");
+        ReactDOM.createRoot(rootElement).render(<App />);
+    </script>
+
+</body>
+</html>
