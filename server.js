@@ -32,7 +32,7 @@ app.get("/", (req, res) => {
 });
 
 // Route to serve the main React page
-app.get("login/", (req, res) => {
+app.get("/login", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "login.html"));
 });
 
