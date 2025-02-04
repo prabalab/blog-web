@@ -36,7 +36,7 @@ app.get("/login", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "login.html"));
 });
 
-/ Route to serve the main React page
+// Route to serve the main React page
 app.get("/loginr", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "nlog.html"));
 });
