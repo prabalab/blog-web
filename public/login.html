@@ -66,6 +66,7 @@
                     if (response.ok) {
                         localStorage.setItem("token", result.token);
                         alert("Login successful");
+                        alert(result.token);
                     } else {
                         alert(result.message || "Login failed");
                     }
