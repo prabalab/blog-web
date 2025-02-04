@@ -19,7 +19,7 @@ mongoose
 app.use("/api/auth", authRoutes);
 
 // Route to serve the main React page
-app.get("user-reg/", (req, res) => {
+app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "registration.html"));
 });
 
