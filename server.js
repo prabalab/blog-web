@@ -18,5 +18,10 @@ mongoose
 // Routes
 app.use("/api/auth", authRoutes);
 
+// Route to serve the main React page
+app.get("user-reg/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "registration.html"));
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
