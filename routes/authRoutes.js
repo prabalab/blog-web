@@ -2,6 +2,8 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const authMiddleware = require("../middleware/authMiddleware");
+
 
 const router = express.Router();
 
@@ -49,5 +51,14 @@ router.post("/login", async (req, res) => {
   }
 });
 
-module.exports = router;
+router.get("/profile", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId).select("-password");
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching user data" });
+  }
+});
 
+
+module.exports = router;
