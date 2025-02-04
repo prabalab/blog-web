@@ -60,5 +60,8 @@ router.get("/profile", authMiddleware, async (req, res) => {
   }
 });
 
+router.get("/protected-route", authMiddleware, (req, res) => {
+    res.json({ message: "You have accessed a protected route!", user: req.user });
+});
 
 module.exports = router;
