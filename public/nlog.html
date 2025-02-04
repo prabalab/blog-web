@@ -122,7 +122,7 @@
         function ProtectedComponent({ token, setToken, setProtectedData, protectedData }) {
             const fetchProtectedData = async () => {
                 try {
-                    const response = await fetch("/protected-route", {
+                    const response = await fetch("/api/auth/protected-route", {
                         method: "GET",
                         headers: {
                             "Content-Type": "application/json",
