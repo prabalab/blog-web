@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Writing in ReactJS CDN</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: auto; }
+        input, textarea { width: 100%; margin-bottom: 10px; padding: 10px; font-size: 16px; }
+        button { padding: 10px 15px; font-size: 16px; margin-right: 5px; cursor: pointer; }
+        .edit-btn { background-color: orange; color: white; border: none; }
+        .delete-btn { background-color: red; color: white; border: none; }
+        .blog-item { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel">
+    const { useState, useEffect } = React;
+
+    function BlogForm() {
+        const [title, setTitle] = useState("");
+        const [content, setContent] = useState("");
+        const [blogs, setBlogs] = useState([]);
+        const [isAuthenticated, setIsAuthenticated] = useState(false);
+        const [editId, setEditId] = useState(null);
+
+        useEffect(() => {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                alert("No token found! Please log in.");
+                return;
+            }
+            setIsAuthenticated(true);
+            fetchUserBlogs(token);
+        }, []);
+
+        const fetchUserBlogs = async (token) => {
+            try {
+                const response = await fetch("http://localhost:5000/api/blogs/user-blogs", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    setBlogs(data);
+                } else {
+                    alert(data.message || "Error fetching blogs");
+                }
+            } catch (error) {
+                console.error("Error fetching blogs:", error);
+            }
+        };
+
+        // Handle Blog Submission
+        const handleSubmit = async (event) => {
+            event.preventDefault();
+            if (!title || !content) {
+                alert("Please enter a title and content.");
+                return;
+            }
+
+            const token = localStorage.getItem("token");
+            try {
+                const method = editId ? "PUT" : "POST";
+                const url = editId
+                    ? `http://localhost:5000/api/blogs/edit/${editId}`
+                    : "http://localhost:5000/api/blogs/submit";
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ title, content })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert(editId ? "Blog updated successfully!" : "Blog submitted successfully!");
+                    setTitle("");
+                    setContent("");
+                    setEditId(null);
+                    fetchUserBlogs(token);
+                } else {
+                    alert(data.message || "Error submitting blog");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        };
+
+        // Handle Edit
+        const handleEdit = (blog) => {
+            setTitle(blog.title);
+            setContent(blog.content);
+            setEditId(blog._id);
+        };
+
+        // Handle Delete
+        const handleDelete = async (blogId) => {
+            const token = localStorage.getItem("token");
+            if (!window.confirm("Are you sure you want to delete this blog?")) return;
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/blogs/delete/${blogId}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert("Blog deleted successfully!");
+                    fetchUserBlogs(token);
+                } else {
+                    alert(data.message || "Error deleting blog");
+                }
+            } catch (error) {
+                console.error("Error deleting blog:", error);
+            }
+        };
+
+        if (!isAuthenticated) {
+            return <h2>Please log in to write and view your blogs</h2>;
+        }
+
+        return (
+            <div className="container">
+                <h2>{editId ? "Edit Blog" : "Write a Blog"}</h2>
+                <form onSubmit={handleSubmit}>
+                    <input 
+                        type="text" 
+                        placeholder="Enter Blog Title" 
+                        value={title} 
+                        onChange={(e) => setTitle(e.target.value)} 
+                    />
+                    <textarea 
+                        rows="6" 
+                        placeholder="Write your blog content here..." 
+                        value={content} 
+                        onChange={(e) => setContent(e.target.value)} 
+                    ></textarea>
+                    <button type="submit">{editId ? "Update" : "Submit"}</button>
+                </form>
+
+                {/* Display User Blogs */}
+                <div className="blog-list">
+                    <h2>Your Blogs</h2>
+                    {blogs.length > 0 ? (
+                        blogs.map((blog) => (
+                            <div key={blog._id} className="blog-item">
+                                <h3>{blog.title}</h3>
+                                <p>{blog.content}</p>
+                                <small>Posted on: {new Date(blog.createdAt).toLocaleString()}</small>
+                                <br/>
+                                <button className="edit-btn" onClick={() => handleEdit(blog)}>Edit</button>
+                                <button className="delete-btn" onClick={() => handleDelete(blog._id)}>Delete</button>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No blogs found. Start writing!</p>
+                    )}
+                </div>
+            </div>
+        );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<BlogForm />);
+</script>
+
+</body>
+</html>
