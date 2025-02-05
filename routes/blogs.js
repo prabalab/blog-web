@@ -22,4 +22,17 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Get a single blog by ID
+router.get("/:id", async (req, res) => {
+    try {
+        const blog = await Blog.findById(req.params.id).populate("userId", "name");
+        if (!blog) {
+            return res.status(404).json({ message: "Blog not found" });
+        }
+        res.status(200).json(blog);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching blog", error });
+    }
+});
+
 module.exports = router;
