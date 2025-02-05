@@ -41,5 +41,10 @@ app.get("/loginr", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "nlog.html"));
 });
 
+// Route to serve the main React page
+app.get("/login-p", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "protect.html"));
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
