@@ -63,6 +63,11 @@ app.get("/user-blog", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "user-bg.html"));
 });
 
+//all blogs show
+app.get("/all-blog", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "allblogs.html"));
+});
+
 /** 🔹 Use the User Routes */
 app.use("/api/user", userRoutes);
 
