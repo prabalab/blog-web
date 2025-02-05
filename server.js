@@ -53,6 +53,11 @@ app.get("/user-profile", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "user-profile.html"));
 });
 
+//Blog form
+app.get("/blog-form", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "blog-form.html"));
+});
+
 /** 🔹 Use the User Routes */
 app.use("/api/user", userRoutes);
 
