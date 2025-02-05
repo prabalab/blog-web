@@ -43,7 +43,7 @@
 
         const fetchUserBlogs = async (token) => {
             try {
-                const response = await fetch("http://localhost:5000/api/blogs/user-blogs", {
+                const response = await fetch("/api/blogs/user-blogs", {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -74,8 +74,8 @@
             try {
                 const method = editId ? "PUT" : "POST";
                 const url = editId
-                    ? `http://localhost:5000/api/blogs/edit/${editId}`
-                    : "http://localhost:5000/api/blogs/submit";
+                    ? `/api/blogs/edit/${editId}`
+                    : "/api/blogs/submit";
 
                 const response = await fetch(url, {
                     method: method,
@@ -115,7 +115,7 @@
             if (!window.confirm("Are you sure you want to delete this blog?")) return;
 
             try {
-                const response = await fetch(`http://localhost:5000/api/blogs/delete/${blogId}`, {
+                const response = await fetch(`/api/blogs/delete/${blogId}`, {
                     method: "DELETE",
                     headers: {
                         "Authorization": `Bearer ${token}`
