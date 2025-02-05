@@ -1,7 +1,6 @@
 const express = require("express");
 const Blog = require("../models/Blog");
-const authMiddleware = require("../authMiddleware"); // Middleware to extract user from token
-
+const authMiddleware = require("../middleware/authMiddleware");
 const router = express.Router();
 
 // Submit Blog
