@@ -25,28 +25,28 @@
         const [blogs, setBlogs] = useState([]);
         const [loading, setLoading] = useState(true);
         const [selectedBlog, setSelectedBlog] = useState(null);
+        const [singleLoading, setSingleLoading] = useState(false);
 
-        // Fetch blogs from the server
+        // Fetch all blogs
         useEffect(() => {
             const fetchBlogs = async () => {
                 try {
-                    const response = await fetch('/api/blogsdata');
+                    const response = await fetch("/api/blogsdata");
                     const data = await response.json();
                     if (response.ok) {
                         setBlogs(data);
-                        // Check URL on load
+                        // Check if a single blog ID is in the URL
                         const path = window.location.pathname;
-                        const blogId = path.split('/blog/')[1];
+                        const blogId = path.split("/blog/")[1];
                         if (blogId) {
-                            const foundBlog = data.find(blog => blog._id === blogId);
-                            if (foundBlog) setSelectedBlog(foundBlog);
+                            fetchSingleBlog(blogId);
                         }
                     } else {
-                        alert(data.message || 'Error fetching blogs');
+                        alert(data.message || "Error fetching blogs");
                     }
                 } catch (error) {
-                    console.error('Error fetching blogs:', error);
-                    alert('Error fetching blogs');
+                    console.error("Error fetching blogs:", error);
+                    alert("Error fetching blogs");
                 } finally {
                     setLoading(false);
                 }
@@ -55,27 +55,29 @@
             fetchBlogs();
         }, []);
 
-        // Handle browser back/forward button
-        useEffect(() => {
-            const handlePopState = () => {
-                const path = window.location.pathname;
-                const blogId = path.split('/blog/')[1];
-                if (blogId) {
-                    const foundBlog = blogs.find(blog => blog._id === blogId);
-                    setSelectedBlog(foundBlog || null);
+        // Fetch single blog by ID
+        const fetchSingleBlog = async (id) => {
+            setSingleLoading(true);
+            try {
+                const response = await fetch(`/api/blogsdata/${id}`);
+                const data = await response.json();
+                if (response.ok) {
+                    setSelectedBlog(data);
+                    window.history.pushState(null, "", `/blog/${id}`);
                 } else {
-                    setSelectedBlog(null);
+                    alert("Blog not found");
                 }
-            };
-
-            window.addEventListener('popstate', handlePopState);
-            return () => window.removeEventListener('popstate', handlePopState);
-        }, [blogs]);
+            } catch (error) {
+                console.error("Error fetching blog:", error);
+                alert("Error fetching blog");
+            } finally {
+                setSingleLoading(false);
+            }
+        };
 
         // Handle click on a blog link
-        const handleClick = (blog) => {
-            window.history.pushState(null, "", `/blog/${blog._id}`);
-            setSelectedBlog(blog);
+        const handleClick = (id) => {
+            fetchSingleBlog(id);
         };
 
         // Handle going back to the blog list
@@ -84,8 +86,28 @@
             setSelectedBlog(null);
         };
 
+        // Handle browser back/forward buttons
+        useEffect(() => {
+            const handlePopState = () => {
+                const path = window.location.pathname;
+                const blogId = path.split("/blog/")[1];
+                if (blogId) {
+                    fetchSingleBlog(blogId);
+                } else {
+                    setSelectedBlog(null);
+                }
+            };
+
+            window.addEventListener("popstate", handlePopState);
+            return () => window.removeEventListener("popstate", handlePopState);
+        }, []);
+
         if (loading) {
             return <h2>Loading blogs...</h2>;
+        }
+
+        if (singleLoading) {
+            return <h2>Loading blog post...</h2>;
         }
 
         if (selectedBlog) {
@@ -109,7 +131,7 @@
                     blogs.map((blog) => (
                         <div key={blog._id} className="blog-item">
                             <h3>
-                                <a href={`/blog/${blog._id}`} onClick={(e) => { e.preventDefault(); handleClick(blog); }}>
+                                <a href={`/blog/${blog._id}`} onClick={(e) => { e.preventDefault(); handleClick(blog._id); }}>
                                     {blog.title}
                                 </a>
                             </h3>
