@@ -46,6 +46,8 @@ app.get("/login-p", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "protect.html"));
 });
 
+/** 🔹 Use the User Routes */
+app.use("/api/user", userRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
