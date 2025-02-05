@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Writing in ReactJS CDN</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: auto; }
+        input, textarea { width: 100%; margin-bottom: 10px; padding: 10px; font-size: 16px; }
+        button { padding: 10px 15px; font-size: 16px; background-color: blue; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel">
+    const { useState, useEffect } = React;
+
+    function BlogForm() {
+        const [title, setTitle] = useState("");
+        const [content, setContent] = useState("");
+        const [isAuthenticated, setIsAuthenticated] = useState(false);
+        const [userId, setUserId] = useState(null);
+
+        // Check authentication and extract user ID
+        useEffect(() => {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                alert("No token found! Please log in.");
+                return;
+            }
+
+            // Decode token to get user ID
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            setUserId(payload.userId);
+            setIsAuthenticated(true);
+        }, []);
+
+        const handleSubmit = async (event) => {
+            event.preventDefault();
+            if (!title || !content) {
+                alert("Please enter a title and content.");
+                return;
+            }
+
+            const token = localStorage.getItem("token");
+            try {
+                const response = await fetch("/api/blogs/submit", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ title, content })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert("Blog submitted successfully!");
+                    setTitle("");
+                    setContent("");
+                } else {
+                    alert(data.message || "Error submitting blog");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        };
+
+        if (!isAuthenticated) {
+            return <h2>Please log in to write a blog</h2>;
+        }
+
+        return (
+            <div className="container">
+                <h2>Write a Blog</h2>
+                <form onSubmit={handleSubmit}>
+                    <input 
+                        type="text" 
+                        placeholder="Enter Blog Title" 
+                        value={title} 
+                        onChange={(e) => setTitle(e.target.value)} 
+                    />
+                    <textarea 
+                        rows="6" 
+                        placeholder="Write your blog content here..." 
+                        value={content} 
+                        onChange={(e) => setContent(e.target.value)} 
+                    ></textarea>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<BlogForm />);
+</script>
+
+</body>
+</html>
