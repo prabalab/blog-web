@@ -56,5 +56,8 @@ app.get("/user-profile", (req, res) => {
 /** 🔹 Use the User Routes */
 app.use("/api/user", userRoutes);
 
+// Use blog routes
+app.use("/api/blogs", blogRoutes);
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
