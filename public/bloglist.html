@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blogs List</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://unpkg.com/react-router-dom@6/umd/react-router-dom.development.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: auto; }
+        .blog-item { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
+        a { color: blue; text-decoration: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel">
+    const { useState, useEffect } = React;
+    const { BrowserRouter, Routes, Route, Link, useParams } = ReactRouterDOM;
+
+    function BlogList() {
+        const [blogs, setBlogs] = useState([]);
+        const [loading, setLoading] = useState(true);
+
+        // Fetch blogs from the server
+        useEffect(() => {
+            const fetchBlogs = async () => {
+                try {
+                    const response = await fetch('/api/blogsdata');
+                    const data = await response.json();
+                    if (response.ok) {
+                        setBlogs(data);
+                    } else {
+                        alert(data.message || 'Error fetching blogs');
+                    }
+                } catch (error) {
+                    console.error('Error fetching blogs:', error);
+                    alert('Error fetching blogs');
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            fetchBlogs();
+        }, []);
+
+        if (loading) {
+            return <h2>Loading blogs...</h2>;
+        }
+
+        return (
+            <div className="container">
+                <h2>All Blogs</h2>
+                {blogs.length > 0 ? (
+                    blogs.map((blog) => (
+                        <div key={blog._id} className="blog-item">
+                            <h3><Link to={`/blog/${blog._id}`}>{blog.title}</Link></h3>
+                            <p>{blog.content.substring(0, 100)}...</p>
+                            <small>Written by: {blog.userId.name}</small>
+                            <br/>
+                            <small>Posted on: {new Date(blog.createdAt).toLocaleString()}</small>
+                        </div>
+                    ))
+                ) : (
+                    <p>No blogs found.</p>
+                )}
+            </div>
+        );
+    }
+
+    function FullBlog() {
+        const { id } = useParams();
+        const [blog, setBlog] = useState(null);
+
+        useEffect(() => {
+            const fetchBlog = async () => {
+                try {
+                    const response = await fetch(`/api/blogsdata/${id}`);
+                    const data = await response.json();
+                    if (response.ok) {
+                        setBlog(data);
+                    } else {
+                        alert(data.message || 'Error fetching blog');
+                    }
+                } catch (error) {
+                    console.error('Error fetching blog:', error);
+                    alert('Error fetching blog');
+                }
+            };
+
+            fetchBlog();
+        }, [id]);
+
+        if (!blog) {
+            return <h2>Loading blog...</h2>;
+        }
+
+        return (
+            <div className="container">
+                <h2>{blog.title}</h2>
+                <p>{blog.content}</p>
+                <small>Written by: {blog.userId.name}</small>
+                <br/>
+                <small>Posted on: {new Date(blog.createdAt).toLocaleString()}</small>
+            </div>
+        );
+    }
+
+    function App() {
+        return (
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<BlogList />} />
+                    <Route path="/blog/:id" element={<FullBlog />} />
+                </Routes>
+            </BrowserRouter>
+        );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+
+</body>
+</html>
