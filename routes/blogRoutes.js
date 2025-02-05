@@ -33,4 +33,39 @@ router.get("/user-blogs", authMiddleware, async (req, res) => {
     }
 });
 
+// Edit a blog post (only by the owner)
+router.put("/edit/:id", authMiddleware, async (req, res) => {
+    try {
+        const { title, content } = req.body;
+        const blog = await Blog.findOne({ _id: req.params.id, userId: req.user.userId });
+
+        if (!blog) {
+            return res.status(404).json({ message: "Blog not found or unauthorized" });
+        }
+
+        blog.title = title;
+        blog.content = content;
+        await blog.save();
+
+        res.json({ message: "Blog updated successfully", blog });
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error });
+    }
+});
+
+// Delete a blog post (only by the owner)
+router.delete("/delete/:id", authMiddleware, async (req, res) => {
+    try {
+        const blog = await Blog.findOneAndDelete({ _id: req.params.id, userId: req.user.userId });
+
+        if (!blog) {
+            return res.status(404).json({ message: "Blog not found or unauthorized" });
+        }
+
+        res.json({ message: "Blog deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error });
+    }
+});
+
 module.exports = router;
