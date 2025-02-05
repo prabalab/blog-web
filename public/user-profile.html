@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    
+    <!-- React and ReactDOM CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            width: 300px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 2px 2px 10px #ddd;
+        }
+        p {
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function UserProfile() {
+            const [user, setUser] = useState(null);
+
+            useEffect(() => {
+                const fetchUserData = async () => {
+                    const token = localStorage.getItem("token");
+                    if (!token) {
+                        alert("No token found! Please log in.");
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch("http://localhost:5000/api/user", {
+                            method: "GET",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Authorization": `Bearer ${token}`,
+                            },
+                        });
+
+                        const data = await response.json();
+
+                        if (response.ok) {
+                            setUser(data);
+                        } else {
+                            alert(data.message || "Error fetching user data");
+                        }
+                    } catch (error) {
+                        console.error("Error fetching data:", error);
+                        alert("Server error. Please try again.");
+                    }
+                };
+
+                fetchUserData();
+            }, []);
+
+            return (
+                <div className="container">
+                    <h2>User Profile</h2>
+                    {user ? (
+                        <div>
+                            <p><strong>Name:</strong> {user.name}</p>
+                            <p><strong>Email:</strong> {user.email}</p>
+                        </div>
+                    ) : (
+                        <p>Loading...</p>
+                    )}
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById("root")).render(<UserProfile />);
+    </script>
+
+</body>
+</html>
