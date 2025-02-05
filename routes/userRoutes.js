@@ -1,6 +1,6 @@
 const express = require("express");
 const User = require("../models/User"); // Import the User model
-const authMiddleware = require("../authMiddleware"); // Middleware for token verification
+const authMiddleware = require("../middleware/authMiddleware");// Middleware for token verification
 
 const router = express.Router();
 
