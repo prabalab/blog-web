@@ -46,6 +46,11 @@ app.get("/login-p", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "protect.html"));
 });
 
+// Route to serve the main React page
+app.get("/user-profile", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "user-profile.html"));
+});
+
 /** 🔹 Use the User Routes */
 app.use("/api/user", userRoutes);
 
