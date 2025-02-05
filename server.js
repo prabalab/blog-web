@@ -6,7 +6,7 @@ const path = require("path");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes"); // Import User Routes
 const blogRoutes = require("./routes/blogRoutes");
-
+const blogRoutesdata = require('./routes/blogs'); // Import the blog routes
 const app = express();
 app.use(express.json());
 app.use(cors());
