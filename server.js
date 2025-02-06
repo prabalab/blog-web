@@ -3,7 +3,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require("path");
-const authRoutes = require("./routes/authRoutes");
+//const authRoutes = require("./routes/authRoutes");
+const authRoutesdata = require("./routes/authRoutesdata");
 const userRoutes = require("./routes/userRoutes"); // Import User Routes
 const blogRoutes = require("./routes/blogRoutes");
 const blogRoutesdata = require('./routes/blogs'); // Import the blog routes
@@ -27,6 +28,8 @@ mongoose
 
 // Routes
 app.use("/api/auth", authRoutes);
+
+app.use("/api/auth", authRoutesdata);
 
 // Route to serve the main React page
 app.get("/", (req, res) => {
