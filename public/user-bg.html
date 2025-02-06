@@ -69,8 +69,7 @@
         alert("Session expired! Please log in again.");
                 window.location.href = "/login"; // Redirect to login page
     } else {
-        alert("Logged out successfully!");
-    }
+    
             event.preventDefault();
             if (!title || !content) {
                 alert("Please enter a title and content.");
@@ -106,6 +105,7 @@
                 }
             } catch (error) {
                 console.error("Error:", error);
+            }
             }
         };
 
