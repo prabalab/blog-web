@@ -29,7 +29,7 @@ mongoose
 // Routes
 //app.use("/api/auth", authRoutes);
 
-app.use("/api/auth", authRoutesdata);
+app.use("/api/authdata", authRoutesdata);
 
 // Route to serve the main React page
 app.get("/", (req, res) => {
