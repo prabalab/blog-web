@@ -7,14 +7,12 @@ const User = require("../models/User");
 const router = express.Router();
 
 // Nodemailer Setup
+// Create a Nodemailer transporter for Gmail
 const transporter = nodemailer.createTransport({
-  service: 'Outlook',
-  host: 'smtp-mail.outlook.com', // Use this for Outlook SMTP
-  port: 587, // Preferred port for STARTTLS (TLS)
-  secure: false, // Use TLS
+  service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER,  // Your Outlook email
-    pass: process.env.EMAIL_PASS,  // Your Outlook app password
+    user: process.env.EMAIL_USER,  // Your Gmail address
+    pass: process.env.EMAIL_PASS,  // Your 16-character Gmail App Password
   },
 });
 
