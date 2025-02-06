@@ -35,6 +35,7 @@
         useEffect(() => {
             const token = localStorage.getItem("token");
             if (!token || checkTokenExpiry()) {
+                localStorage.removeItem("token"); // Remove token
                 alert("No token found! Please log in.");
                 window.location.href = "/login"; // Redirect to login page
                 return;
