@@ -34,7 +34,7 @@
 
         useEffect(() => {
             const token = localStorage.getItem("token");
-            if (!token) {
+            if (!token || checkTokenExpiry()) {
                 alert("No token found! Please log in.");
                 window.location.href = "/login"; // Redirect to login page
                 return;
@@ -67,6 +67,7 @@
         const handleSubmit = async (event) => {
             if (checkTokenExpiry()) {
         alert("Session expired! Please log in again.");
+                localStorage.removeItem("token"); // Remove token
                 window.location.href = "/login"; // Redirect to login page
     } else {
     
