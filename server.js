@@ -40,8 +40,8 @@ app.get("/", (req, res) => {
 app.get("/otp-reg", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "otp-reg.html"));
 });
-//delete data
-app.get("/userdatas", (req, res) => {
+
+app.get("/all-user-data", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "userdata.html"));
 });
 
