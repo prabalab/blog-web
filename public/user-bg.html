@@ -65,6 +65,12 @@
         };
 
         const handleSubmit = async (event) => {
+            if (checkTokenExpiry()) {
+        alert("Session expired! Please log in again.");
+                window.location.href = "/login"; // Redirect to login page
+    } else {
+        alert("Logged out successfully!");
+    }
             event.preventDefault();
             if (!title || !content) {
                 alert("Please enter a title and content.");
@@ -134,11 +140,28 @@
             }
         };
 
-        const handleLogout = () => {
-            localStorage.removeItem("token"); // Remove token
-            alert("Logged out successfully!");
-            window.location.href = "/login"; // Redirect to login page
-        };
+        const checkTokenExpiry = () => {
+    const token = localStorage.getItem("token");
+    if (!token) return false;
+
+    try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        return payload.exp * 100 < Date.now(); // Convert `exp` to milliseconds and compare with current time
+    } catch (error) {
+        return false; // Invalid token
+    }
+};
+
+const handleLogout = () => {
+    if (checkTokenExpiry()) {
+        alert("Session expired! Please log in again.");
+    } else {
+        alert("Logged out successfully!");
+    }
+    
+    localStorage.removeItem("token"); // Remove token
+    window.location.href = "/login"; // Redirect to login page
+};
 
         if (!isAuthenticated) {
             return <h2>Please log in to write and view your blogs</h2>;
