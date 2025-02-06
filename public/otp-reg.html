@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        input, button { margin: 10px; padding: 10px; }
+    </style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel">
+    const API_URL = "/api/authdata";
+
+    function App() {
+        const [step, setStep] = React.useState("register");
+        const [name, setName] = React.useState("");
+        const [email, setEmail] = React.useState("");
+        const [password, setPassword] = React.useState("");
+        const [otp, setOtp] = React.useState("");
+        const [message, setMessage] = React.useState("");
+
+        // Register & Send OTP
+        const handleRegister = async () => {
+            const res = await fetch(`${API_URL}/register`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, email, password })
+            });
+            const data = await res.json();
+            setMessage(data.message || data.error);
+            if (res.ok) setStep("verify");
+        };
+
+        // Verify OTP
+        const handleVerifyOtp = async () => {
+            const res = await fetch(`${API_URL}/verify-otp`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, otp })
+            });
+            const data = await res.json();
+            setMessage(data.message || data.error);
+            if (res.ok) setStep("verified");
+        };
+
+        return (
+            <div>
+                <h2>OTP Verification System</h2>
+                {message && <p>{message}</p>}
+                
+                {step === "register" && (
+                    <div>
+                        <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
+                        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                        <button onClick={handleRegister}>Register</button>
+                    </div>
+                )}
+
+                {step === "verify" && (
+                    <div>
+                        <input type="text" placeholder="Enter OTP" value={otp} onChange={(e) => setOtp(e.target.value)} />
+                        <button onClick={handleVerifyOtp}>Verify OTP</button>
+                    </div>
+                )}
+
+                {step === "verified" && <h3>Email Verified Successfully! 🎉</h3>}
+            </div>
+        );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+
+</body>
+</html>
