@@ -41,7 +41,7 @@ app.get("/otp-reg", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "otp-reg.html"));
 });
 //delete data
-app.get("/userdata", (req, res) => {
+app.get("/userdatas", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "userdata.html"));
 });
 
