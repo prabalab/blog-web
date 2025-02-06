@@ -42,12 +42,19 @@ router.post("/register", async (req, res) => {
     await newUser.save();
 
     // Send OTP via email
-    const mailOptions = {
+    /*const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
       subject: "Your OTP Code",
       text: `Your OTP code is ${otp}. It is valid for 10 minutes.`,
-    };
+    };*/
+
+    const mailOptions = {
+  from: process.env.EMAIL_USER,  // Sender's email address
+  to: 'mithun.ultra@yahoo.com',  // Recipient's email address
+  subject: 'OTP for Email Verification',
+  text: 'Your OTP is 123456', // OTP message
+};
 
     transporter.sendMail(mailOptions, (error) => {
       if (error) return res.status(500).json({ error: "Error sending OTP" });
