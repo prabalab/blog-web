@@ -8,10 +8,13 @@ const router = express.Router();
 
 // Nodemailer Setup
 const transporter = nodemailer.createTransport({
-  service: "Outlook", // Change to "Gmail" if using Gmail
+  service: 'Outlook',
+  host: 'smtp-mail.outlook.com', // Use this for Outlook SMTP
+  port: 587, // Preferred port for STARTTLS (TLS)
+  secure: false, // Use TLS
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: process.env.EMAIL_USER,  // Your Outlook email
+    pass: process.env.EMAIL_PASS,  // Your Outlook app password
   },
 });
 
