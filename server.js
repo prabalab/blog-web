@@ -37,6 +37,11 @@ app.get("/", (req, res) => {
 });
 
 // Route to serve the main React page
+app.get("/otp-reg", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "otp-reg.html"));
+});
+
+// Route to serve the main React page
 app.get("/login", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "login.html"));
 });
