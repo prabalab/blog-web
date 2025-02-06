@@ -47,10 +47,19 @@ router.post("/register", async (req, res) => {
       text: `Your OTP code is ${otp}. It is valid for 10 minutes.`,
     };
 
-    transporter.sendMail(mailOptions, (error) => {
+   /* transporter.sendMail(mailOptions, (error) => {
       if (error) return res.status(500).json({ error: "Error sending OTP" });
       res.json({ message: "OTP sent. Please verify your email." });
-    });
+    });*/
+
+    transporter.sendMail(mailOptions, (error, info) => {
+  if (error) {
+    console.error("Error sending OTP:", error); // Log the full error
+    return res.status(500).json({ error: "Error sending OTP", details: error.message });
+  }
+  console.log("OTP sent successfully:", info);
+  res.json({ message: "OTP sent. Please verify your email." });
+});
 
   } catch (err) {
     res.status(500).json({ error: "Server error" });
