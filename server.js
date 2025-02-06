@@ -41,9 +41,6 @@ app.get("/otp-reg", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "otp-reg.html"));
 });
 
-app.get("/all-user-data", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "userdata.html"));
-});
 
 // Route to serve the main React page
 app.get("/login", (req, res) => {
@@ -103,6 +100,10 @@ app.use("/api/blogs", blogRoutes);
 
 // Use blog routes
 app.use('/api/blogsdata', blogRoutesdata);
+
+app.get("/all-user-data", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "userdata.html"));
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
