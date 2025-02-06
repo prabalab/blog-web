@@ -40,6 +40,10 @@ app.get("/", (req, res) => {
 app.get("/otp-reg", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "otp-reg.html"));
 });
+//delete data
+app.get("/userdata", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "userdata.html"));
+});
 
 // Route to serve the main React page
 app.get("/login", (req, res) => {
