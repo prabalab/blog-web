@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User List</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    function App() {
+      const [users, setUsers] = useState([]);
+      const [loading, setLoading] = useState(true);
+      const [error, setError] = useState(null);
+
+      useEffect(() => {
+        // Fetch users from backend
+        fetch('/api/blogsdata/usersdata')
+          .then(response => response.json())
+          .then(data => {
+            setUsers(data.users);
+            setLoading(false);
+          })
+          .catch(err => {
+            setError('Error fetching users');
+            setLoading(false);
+          });
+      }, []);
+
+      if (loading) return <div>Loading...</div>;
+      if (error) return <div>{error}</div>;
+
+      return (
+        <div>
+          <h1>User List</h1>
+          <table border="1" cellPadding="10">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Verified</th>
+                <th>OTP</th>
+                <th>OTP Expires</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.length === 0 ? (
+                <tr><td colSpan="5">No users found.</td></tr>
+              ) : (
+                users.map((user, index) => (
+                  <tr key={index}>
+                    <td>{user.name}</td>
+                    <td>{user.email}</td>
+                    <td>{user.isVerified ? 'Yes' : 'No'}</td>
+                    <td>{user.otp || 'N/A'}</td>
+                    <td>{user.otpExpires ? new Date(user.otpExpires).toLocaleString() : 'N/A'}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>
