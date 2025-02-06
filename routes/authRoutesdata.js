@@ -126,7 +126,7 @@ router.post("/resend-otp", async (req, res) => {
   }
 });
 
-app.get('/usersdata', async (req, res) => {
+router.get('/usersdata', async (req, res) => {
   try {
     // Fetch all users from the database
     const users = await User.find();
