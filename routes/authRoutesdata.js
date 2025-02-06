@@ -126,4 +126,17 @@ router.post("/resend-otp", async (req, res) => {
   }
 });
 
+app.get('/usersdata', async (req, res) => {
+  try {
+    // Fetch all users from the database
+    const users = await User.find();
+
+    // Return the list of users as a JSON response
+    res.json({ users });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ error: 'Failed to fetch users' });
+  }
+});
+
 module.exports = router;
