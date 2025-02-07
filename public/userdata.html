@@ -21,7 +21,7 @@
 
       useEffect(() => {
         // Fetch users from backend
-        fetch('/api/blogsdata/usersdata')
+        fetch('/api/authdata/usersdata')
           .then(response => response.json())
           .then(data => {
             setUsers(data.users);
