@@ -20,7 +20,11 @@
       const [error, setError] = useState(null);
 
       useEffect(() => {
-        // Fetch users from backend
+        fetchUsers();
+      }, []);
+
+      const fetchUsers = () => {
+        setLoading(true);
         fetch('/api/authdata/usersdata')
           .then(response => response.json())
           .then(data => {
@@ -31,7 +35,18 @@
             setError('Error fetching users');
             setLoading(false);
           });
-      }, []);
+      };
+
+      const deleteUser = (id) => {
+        fetch(`/api/authdata/usersdata/${id}`, { method: 'DELETE' })
+          .then(response => response.json())
+          .then(() => {
+            setUsers(users.filter(user => user._id !== id)); // Remove deleted user from UI
+          })
+          .catch(err => {
+            console.error('Error deleting user:', err);
+          });
+      };
 
       if (loading) return <div>Loading...</div>;
       if (error) return <div>{error}</div>;
@@ -47,11 +62,12 @@
                 <th>Verified</th>
                 <th>OTP</th>
                 <th>OTP Expires</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
               {users.length === 0 ? (
-                <tr><td colSpan="5">No users found.</td></tr>
+                <tr><td colSpan="6">No users found.</td></tr>
               ) : (
                 users.map((user, index) => (
                   <tr key={index}>
@@ -60,6 +76,9 @@
                     <td>{user.isVerified ? 'Yes' : 'No'}</td>
                     <td>{user.otp || 'N/A'}</td>
                     <td>{user.otpExpires ? new Date(user.otpExpires).toLocaleString() : 'N/A'}</td>
+                    <td>
+                      <button onClick={() => deleteUser(user._id)}>Delete</button>
+                    </td>
                   </tr>
                 ))
               )}
