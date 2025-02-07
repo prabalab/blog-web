@@ -70,8 +70,9 @@ if (existingUser && existingUser.isVerified) {
 });
 
   } catch (err) {
-    res.status(500).json({ error: "Server error" });
-  }
+  console.error("Registration Error:", err); // Log the full error
+  res.status(500).json({ error: "Server error", details: err.message });
+}
 });
 
 // ✅ **2. Verify OTP**
