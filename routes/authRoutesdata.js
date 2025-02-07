@@ -28,7 +28,7 @@ router.post("/register", async (req, res) => {
     // Check if the email already exists and is verified
 const existingUser = await User.findOne({ email });
 
-if (existingUser && existingUser.isVerified) {
+if (existingUser && existingUser.isVerified === "Yes") {
   return res.status(400).json({ error: "Email already exists and is verified" });
 }
 
