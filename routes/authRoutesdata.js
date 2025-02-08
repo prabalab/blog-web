@@ -33,8 +33,6 @@ if (existingUser && existingUser.isVerified) {
 }
 
     if (existingUser && !existingUser.isVerified) {
-  return res.status(400).json({ error: "Email already exists but is not verified. Please verify your email." });
-    
 const otp = generateOTP(); // Generate 6-digit OTP
 const otpExpires = Date.now() + 10 * 60 * 1000; // OTP valid for 10 minutes
 const hashedPassword = await bcrypt.hash(password, 10);
@@ -62,6 +60,9 @@ console.log(updatedUser);
   console.log("OTP sent successfully:", info);
   res.json({ message: "OTP sent. Please verify your email." });
 });
+
+    return res.status(400).json({ error: "Email already exists but is not verified. Please verify your email." });
+      
     }
     else {
 // Send OTP via email (assuming a sendMail function exists)
