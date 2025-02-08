@@ -68,7 +68,7 @@ console.log(updatedUser);
 // Send OTP via email (assuming a sendMail function exists)
 //await sendMail(existingUser.email, "Your OTP Code", `Your OTP is ${otp}`);
 
-return res.status(200).json({ message: "OTP sent successfully" });
+//return res.status(200).json({ message: "OTP sent successfully" });
     // Check if the email already exists
     /*const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ error: "Email already exists" });
