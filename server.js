@@ -8,6 +8,7 @@ const authRoutesdata = require("./routes/authRoutesdata");
 const userRoutes = require("./routes/userRoutes"); // Import User Routes
 const blogRoutes = require("./routes/blogRoutes");
 const blogRoutesdata = require('./routes/blogs'); // Import the blog routes
+const userRoutesreset = require("./routes/userRoutesreset");
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -31,6 +32,8 @@ mongoose
 
 app.use("/api/authdata", authRoutesdata);
 
+app.use("/api/usersreset", userRoutesreset);
+
 // Route to serve the main React page
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "registration.html"));
@@ -41,6 +44,10 @@ app.get("/otp-reg", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "otp-reg.html"));
 });
 
+//reset password 
+app.get("/reset-pass", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "reset-pass.html"));
+});
 
 // Route to serve the main React page
 app.get("/login", (req, res) => {
