@@ -32,6 +32,19 @@ if (existingUser && existingUser.isVerified) {
   return res.status(400).json({ error: "Email already exists and is verified" });
 }
 
+    if (existingUser && !existingUser.isVerified) {
+  return res.status(400).json({ error: "Email already exists but is not verified. Please verify your email." });
+}
+    
+const otp = Math.floor(100000 + Math.random() * 900000); // Generate 6-digit OTP
+existingUser.otp = otp; // Store OTP in user document
+existingUser.otpExpires = Date.now() + 10 * 60 * 1000; // OTP valid for 10 minutes
+await existingUser.save(); // Save the updated user info
+
+// Send OTP via email (assuming a sendMail function exists)
+await sendMail(existingUser.email, "Your OTP Code", `Your OTP is ${otp}`);
+
+return res.status(200).json({ message: "OTP sent successfully" });
     // Check if the email already exists
     /*const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ error: "Email already exists" });
