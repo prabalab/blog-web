@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Reset</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script>
+        function PasswordReset() {
+            const [email, setEmail] = React.useState("");
+            const [otp, setOtp] = React.useState("");
+            const [newPassword, setNewPassword] = React.useState("");
+            const [step, setStep] = React.useState(1);
+
+            const requestReset = async () => {
+                try {
+                    await axios.post("/api/usersreset/request-reset", { email });
+                    alert("OTP sent to your email.");
+                    setStep(2);
+                } catch (error) {
+                    alert(error.response.data.message);
+                }
+            };
+
+            const verifyOtp = async () => {
+                try {
+                    await axios.post("/api/usersreset/verify-otp", { email, otp });
+                    setStep(3);
+                } catch (error) {
+                    alert(error.response.data.message);
+                }
+            };
+
+            const resetPassword = async () => {
+                try {
+                    await axios.post("/api/usersreset/reset-password", { email, otp, newPassword });
+                    alert("Password reset successful!");
+                    setStep(1);
+                } catch (error) {
+                    alert(error.response.data.message);
+                }
+            };
+
+            return React.createElement("div", null,
+                step === 1 && React.createElement("div", null,
+                    React.createElement("h2", null, "Request Password Reset"),
+                    React.createElement("input", { type: "email", placeholder: "Email", value: email, onChange: e => setEmail(e.target.value) }),
+                    React.createElement("button", { onClick: requestReset }, "Send OTP")
+                ),
+                step === 2 && React.createElement("div", null,
+                    React.createElement("h2", null, "Verify OTP"),
+                    React.createElement("input", { type: "text", placeholder: "Enter OTP", value: otp, onChange: e => setOtp(e.target.value) }),
+                    React.createElement("button", { onClick: verifyOtp }, "Verify OTP")
+                ),
+                step === 3 && React.createElement("div", null,
+                    React.createElement("h2", null, "Reset Password"),
+                    React.createElement("input", { type: "password", placeholder: "New Password", value: newPassword, onChange: e => setNewPassword(e.target.value) }),
+                    React.createElement("button", { onClick: resetPassword }, "Reset Password")
+                )
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(PasswordReset));
+    </script>
+</body>
+</html>
