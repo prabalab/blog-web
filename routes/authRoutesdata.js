@@ -61,7 +61,7 @@ console.log(updatedUser);
   res.json({ message: "OTP sent. Please verify your email." });
 });
 
-    return res.status(400).json({ error: "Email already exists but is not verified. Please verify your email." });
+   // return res.status(400).json({ error: "Email already exists but is not verified. Please verify your email." });
       
     }
     else {
