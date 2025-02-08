@@ -34,13 +34,32 @@ if (existingUser && existingUser.isVerified) {
 
     if (existingUser && !existingUser.isVerified) {
   return res.status(400).json({ error: "Email already exists but is not verified. Please verify your email." });
-}
     
-const otp = generateOTP(); // Generate 6-digit OTP
-existingUser.otp = otp; // Store OTP in user document
+const otpe = generateOTP(); // Generate 6-digit OTP
+existingUser.otp = otpe; // Store OTP in user document
 existingUser.otpExpires = Date.now() + 10 * 60 * 1000; // OTP valid for 10 minutes
-await existingUser.save(); // Save the updated user info
+const hashedPassword = await bcrypt.hash(password, 10);
+const newUsere = new User({ name, email, password: hashedPassword, otp, otpExpires });
+      
+await newUsere.save(); // Save the updated user info
 
+      const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Your OTP Code",
+      text: `Your OTP code is ${otp}. It is valid for 10 minutes.`,
+    };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+  if (error) {
+    console.error("Error sending OTP:", error); // Log the full error
+    return res.status(500).json({ error: "Error sending OTP", details: error.message });
+  }
+  console.log("OTP sent successfully:", info);
+  res.json({ message: "OTP sent. Please verify your email." });
+});
+    }
+    else {
 // Send OTP via email (assuming a sendMail function exists)
 //await sendMail(existingUser.email, "Your OTP Code", `Your OTP is ${otp}`);
 
@@ -53,7 +72,7 @@ return res.status(200).json({ message: "OTP sent successfully" });
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Generate OTP & expiry
-  //  const otp = generateOTP();
+    const otp = generateOTP();
     const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // Expires in 10 minutes
 
     // Save user to DB (unverified)
@@ -81,6 +100,7 @@ return res.status(200).json({ message: "OTP sent successfully" });
   console.log("OTP sent successfully:", info);
   res.json({ message: "OTP sent. Please verify your email." });
 });
+    }
 
   } catch (err) {
   console.error("Registration Error:", err); // Log the full error
