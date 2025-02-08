@@ -35,13 +35,17 @@ if (existingUser && existingUser.isVerified) {
     if (existingUser && !existingUser.isVerified) {
   return res.status(400).json({ error: "Email already exists but is not verified. Please verify your email." });
     
-const otpe = generateOTP(); // Generate 6-digit OTP
-existingUser.otp = otpe; // Store OTP in user document
-existingUser.otpExpires = Date.now() + 10 * 60 * 1000; // OTP valid for 10 minutes
+const otp = generateOTP(); // Generate 6-digit OTP
+const otpExpires = Date.now() + 10 * 60 * 1000; // OTP valid for 10 minutes
 const hashedPassword = await bcrypt.hash(password, 10);
-const newUsere = new User({ name, email, password: hashedPassword, otp, otpExpires });
-      
-await newUsere.save(); // Save the updated user info
+    const updatedUser = await User.findOneAndUpdate(
+  { email }, // Find user by email
+  { name, password: hashedPassword, otp, otpExpires }, // Update fields
+  { new: true, runValidators: true } // Return updated doc & validate fields
+);
+
+console.log(updatedUser);
+
 
       const mailOptions = {
       from: process.env.EMAIL_USER,
