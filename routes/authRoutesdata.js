@@ -42,7 +42,7 @@ existingUser.otpExpires = Date.now() + 10 * 60 * 1000; // OTP valid for 10 minut
 await existingUser.save(); // Save the updated user info
 
 // Send OTP via email (assuming a sendMail function exists)
-await sendMail(existingUser.email, "Your OTP Code", `Your OTP is ${otp}`);
+//await sendMail(existingUser.email, "Your OTP Code", `Your OTP is ${otp}`);
 
 return res.status(200).json({ message: "OTP sent successfully" });
     // Check if the email already exists
