@@ -35,7 +35,7 @@ app.use("/api/authdata", authRoutesdata);
 app.use("/api/usersreset", userRoutesreset);
 
 // Route to serve the main React page
-app.get("/", (req, res) => {
+app.get("/registration", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "registration.html"));
 });
 
@@ -90,7 +90,7 @@ app.get("/blog-list-one", (req, res) => {
 });
 
 //all blogs show one by one
-app.get("/blog-list", (req, res) => {
+app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "blogone.html"));
 });
 
