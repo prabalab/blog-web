@@ -34,6 +34,9 @@ app.use("/api/authdata", authRoutesdata);
 
 app.use("/api/usersreset", userRoutesreset);
 
+// Use blog routes
+app.use('/api/blogsdata', blogRoutesdata);
+
 // Route to serve the main React page
 app.get("/user-registration", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "registration.html"));
@@ -90,7 +93,7 @@ app.get("/blog-list-one", (req, res) => {
 });
 
 //all blogs show one by one
-app.get("/", (req, res) => {
+app.get("/blog-one", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "blogone.html"));
 });
 
@@ -104,9 +107,6 @@ app.use("/api/user", userRoutes);
 
 // Use blog routes
 app.use("/api/blogs", blogRoutes);
-
-// Use blog routes
-app.use('/api/blogsdata', blogRoutesdata);
 
 app.get("/all-user-data", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "userdata.html"));
