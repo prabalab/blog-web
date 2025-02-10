@@ -117,6 +117,76 @@
                 display: flex;
             }
         }
+
+          body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 300px;
+}
+
+h2 {
+    color: #333;
+}
+
+.message {
+    color: #d9534f;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+button {
+    padding: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+.success {
+    color: #28a745;
+    font-weight: bold;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}  
     </style>
 </head>
 <body>
@@ -154,63 +224,60 @@
         }
 
     function App() {
-        const [step, setStep] = React.useState("register");
-        const [name, setName] = React.useState("");
-        const [email, setEmail] = React.useState("");
-        const [password, setPassword] = React.useState("");
-        const [otp, setOtp] = React.useState("");
-        const [message, setMessage] = React.useState("");
+    const [step, setStep] = React.useState("register");
+    const [name, setName] = React.useState("");
+    const [email, setEmail] = React.useState("");
+    const [password, setPassword] = React.useState("");
+    const [otp, setOtp] = React.useState("");
+    const [message, setMessage] = React.useState("");
 
-        // Register & Send OTP
-        const handleRegister = async () => {
-            const res = await fetch(`${API_URL}/register`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, email, password })
-            });
-            const data = await res.json();
-            setMessage(data.message || data.error);
-            if (res.ok) setStep("verify");
-        };
+    const handleRegister = async () => {
+        const res = await fetch(`${API_URL}/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, password })
+        });
+        const data = await res.json();
+        setMessage(data.message || data.error);
+        if (res.ok) setStep("verify");
+    };
 
-        // Verify OTP
-        const handleVerifyOtp = async () => {
-            const res = await fetch(`${API_URL}/verify-otp`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, otp })
-            });
-            const data = await res.json();
-            setMessage(data.message || data.error);
-            if (res.ok) setStep("verified");
-        };
+    const handleVerifyOtp = async () => {
+        const res = await fetch(`${API_URL}/verify-otp`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, otp })
+        });
+        const data = await res.json();
+        setMessage(data.message || data.error);
+        if (res.ok) setStep("verified");
+    };
 
-        return (
-            <div>
-                <h2>User Registration</h2>
-                {message && <p>{message}</p>}
-                
-                {step === "register" && (
-                    <div>
-                        <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
-                        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                        <button onClick={handleRegister}>Register</button>
-                    </div>
-                )}
+    return (
+        <div className="container">
+            <h2>User Registration</h2>
+            {message && <p className="message">{message}</p>}
 
-                {step === "verify" && (
-                    <div>
-                        <input type="text" placeholder="Enter OTP" value={otp} onChange={(e) => setOtp(e.target.value)} />
-                        <button onClick={handleVerifyOtp}>Verify OTP</button>
-                    </div>
-                )}
+            {step === "register" && (
+                <div className="form">
+                    <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
+                    <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                    <button onClick={handleRegister}>Register</button>
+                </div>
+            )}
 
-                {step === "verified" && <h3>Email Verified Successfully! 🎉<a href="/login">Click to login</a></h3>}
-            </div>
-        );
-    }
+            {step === "verify" && (
+                <div className="form">
+                    <input type="text" placeholder="Enter OTP" value={otp} onChange={(e) => setOtp(e.target.value)} />
+                    <button onClick={handleVerifyOtp}>Verify OTP</button>
+                </div>
+            )}
 
+            {step === "verified" && <h3 className="success">Email Verified Successfully! 🎉 <a href="/login">Click to login</a></h3>}
+        </div>
+    );
+}
         // App Component
         const Apps = () => {
           return (
