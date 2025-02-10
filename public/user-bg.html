@@ -328,7 +328,6 @@ const handleLogout = () => {
 
         return (
             <div className="container">
-                <button className="logout-btn" onClick={handleLogout}></button>
                 <h2>{editId ? "Edit Blog" : "Write a Blog"}</h2>
                 <form onSubmit={handleSubmit}>
                     <input 
@@ -356,7 +355,7 @@ const handleLogout = () => {
                                 <small>Posted on: {new Date(blog.createdAt).toLocaleString()}</small>
                                 <br/>
                                 <button className="edit-btn" onClick={() => handleEdit(blog)}>Edit</button>
-                                <button className="delete-btn" onClick={() => handleDelete(blog._id)}></button>
+                                <button className="delete-btn" onClick={() => handleDelete(blog._id)}>Delete</button>
                             </div>
                         ))
                     ) : (
