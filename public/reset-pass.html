@@ -7,6 +7,8 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script> <!-- Add Babel -->
+
     <style>
         body {
             margin: 0;
@@ -14,7 +16,6 @@
             background-color: #f4f4f4;
         }
 
-        /* Navbar Styles */
         .navbar {
             display: flex;
             justify-content: space-between;
@@ -33,10 +34,6 @@
             transition: transform 0.3s ease-in-out;
         }
 
-        .logo a:hover {
-            transform: scale(1.1);
-        }
-
         .menu {
             display: flex;
             gap: 20px;
@@ -47,43 +44,6 @@
             text-decoration: none;
             font-size: 16px;
             font-weight: 500;
-            position: relative;
-            padding: 5px 0;
-            transition: color 0.3s ease-in-out;
-        }
-
-        .menu a::after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            bottom: -3px;
-            width: 0;
-            height: 2px;
-            background: white;
-            transition: all 0.3s ease-in-out;
-            transform: translateX(-50%);
-        }
-
-        .menu a:hover::after {
-            width: 100%;
-        }
-
-        .menu a:hover {
-            color: #f1f1f1;
-        }
-
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-        }
-
-        .hamburger div {
-            width: 30px;
-            height: 3px;
-            background-color: white;
-            margin: 5px 0;
-            transition: 0.4s;
         }
 
         @media (max-width: 768px) {
@@ -98,23 +58,76 @@
                 padding: 10px;
                 border-radius: 5px;
                 text-align: center;
-                transition: transform 0.3s ease-in-out;
             }
 
             .menu.open {
                 display: flex;
             }
-
-            .hamburger {
-                display: flex;
-            }
         }
     </style>
+    <style>
+    .password-reset-container {
+        max-width: 400px;
+        margin: 50px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .password-reset-container h2 {
+        color: #ff7e5f;
+        margin-bottom: 20px;
+    }
+
+    .password-reset-container input {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        transition: border-color 0.3s ease-in-out;
+    }
+
+    .password-reset-container input:focus {
+        border-color: #ff7e5f;
+        outline: none;
+    }
+
+    .password-reset-container button {
+        width: 100%;
+        padding: 10px;
+        background: linear-gradient(135deg, #ff7e5f, #feb47b);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .password-reset-container button:hover {
+        transform: scale(1.05);
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
 </head>
 <body>
     <div id="root"></div>
-    
-    <script>
+
+    <script type="text/babel">
         function Navbar() {
             const [isOpen, setIsOpen] = React.useState(false);
 
@@ -123,16 +136,7 @@
                     <div className="logo">
                         <a href="#">My Blog</a>
                     </div>
-
-                    {/* Hamburger Menu */}
-                    <div className="hamburger" onClick={() => setIsOpen(!isOpen)}>
-                        <div className={isOpen ? "rotate-top" : ""}></div>
-                        <div className={isOpen ? "hidden" : ""}></div>
-                        <div className={isOpen ? "rotate-bottom" : ""}></div>
-                    </div>
-
-                    {/* Navigation Links */}
-                    <div className={`menu ${isOpen ? "open" : ""}`}>
+                    <div className="menu">
                         <a href="/">Home</a>
                         <a href="/login">Login</a>
                         <a href="/otp-reg">Registration</a>
@@ -143,88 +147,90 @@
         }
 
         function PasswordReset() {
-            const [email, setEmail] = React.useState("");
-            const [otp, setOtp] = React.useState("");
-            const [newPassword, setNewPassword] = React.useState("");
-            const [step, setStep] = React.useState(1);
+        const [email, setEmail] = React.useState("");
+        const [otp, setOtp] = React.useState("");
+        const [newPassword, setNewPassword] = React.useState("");
+        const [step, setStep] = React.useState(1);
 
-            const requestReset = async () => {
-                try {
-                    await axios.post("/api/usersreset/request-reset", { email });
-                    alert("OTP sent to your email.");
-                    setStep(2);
-                } catch (error) {
-                    alert(error.response?.data?.message || "Error sending OTP.");
-                }
-            };
+        const requestReset = async () => {
+            try {
+                await axios.post("/api/usersreset/request-reset", { email });
+                alert("OTP sent to your email.");
+                setStep(2);
+            } catch (error) {
+                alert(error.response?.data?.message || "Error sending OTP.");
+            }
+        };
 
-            const verifyOtp = async () => {
-                try {
-                    await axios.post("/api/usersreset/verify-otp", { email, otp });
-                    setStep(3);
-                } catch (error) {
-                    alert(error.response?.data?.message || "Invalid OTP.");
-                }
-            };
+        const verifyOtp = async () => {
+            try {
+                await axios.post("/api/usersreset/verify-otp", { email, otp });
+                setStep(3);
+            } catch (error) {
+                alert(error.response?.data?.message || "Invalid OTP.");
+            }
+        };
 
-            const resetPassword = async () => {
-                try {
-                    await axios.post("/api/usersreset/reset-password", { email, otp, newPassword });
-                    alert("Password reset successful!");
-                    setStep(1);
-                } catch (error) {
-                    alert(error.response?.data?.message || "Error resetting password.");
-                }
-            };
+        const resetPassword = async () => {
+            try {
+                await axios.post("/api/usersreset/reset-password", { email, otp, newPassword });
+                alert("Password reset successful!");
+                setStep(1);
+            } catch (error) {
+                alert(error.response?.data?.message || "Error resetting password.");
+            }
+        };
 
+        return (
+            <div className="password-reset-container">
+                {step === 1 && (
+                    <div>
+                        <h2>Request Password Reset</h2>
+                        <input 
+                            type="email" 
+                            placeholder="Enter your email" 
+                            value={email} 
+                            onChange={e => setEmail(e.target.value)} 
+                        />
+                        <button onClick={requestReset}>Send OTP</button>
+                    </div>
+                )}
+                {step === 2 && (
+                    <div>
+                        <h2>Verify OTP</h2>
+                        <input 
+                            type="text" 
+                            placeholder="Enter OTP" 
+                            value={otp} 
+                            onChange={e => setOtp(e.target.value)} 
+                        />
+                        <button onClick={verifyOtp}>Verify OTP</button>
+                    </div>
+                )}
+                {step === 3 && (
+                    <div>
+                        <h2>Reset Password</h2>
+                        <input 
+                            type="password" 
+                            placeholder="Enter new password" 
+                            value={newPassword} 
+                            onChange={e => setNewPassword(e.target.value)} 
+                        />
+                        <button onClick={resetPassword}>Reset Password</button>
+                    </div>
+                )}
+            </div>
+        );
+    }
+
+        function App() {
             return (
                 <div>
-                    {step === 1 && (
-                        <div>
-                            <h2>Request Password Reset</h2>
-                            <input 
-                                type="email" 
-                                placeholder="Email" 
-                                value={email} 
-                                onChange={e => setEmail(e.target.value)} 
-                            />
-                            <button onClick={requestReset}>Send OTP</button>
-                        </div>
-                    )}
-                    {step === 2 && (
-                        <div>
-                            <h2>Verify OTP</h2>
-                            <input 
-                                type="text" 
-                                placeholder="Enter OTP" 
-                                value={otp} 
-                                onChange={e => setOtp(e.target.value)} 
-                            />
-                            <button onClick={verifyOtp}>Verify OTP</button>
-                        </div>
-                    )}
-                    {step === 3 && (
-                        <div>
-                            <h2>Reset Password</h2>
-                            <input 
-                                type="password" 
-                                placeholder="New Password" 
-                                value={newPassword} 
-                                onChange={e => setNewPassword(e.target.value)} 
-                            />
-                            <button onClick={resetPassword}>Reset Password</button>
-                        </div>
-                    )}
+                    <Navbar />
+                    <PasswordReset />
                 </div>
             );
         }
-
-        const App = () => (
-            <div>
-                <Navbar />
-                <PasswordReset />
-            </div>
-        );
 
         const root = ReactDOM.createRoot(document.getElementById("root"));
         root.render(<App />);
