@@ -85,12 +85,12 @@ app.get("/all-blog", (req, res) => {
 });
 
 //all blogs show
-app.get("/blog-list", (req, res) => {
+app.get("/blog-list-one", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "bloglist.html"));
 });
 
 //all blogs show one by one
-app.get("/blog-one", (req, res) => {
+app.get("/blog-list", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "blogone.html"));
 });
 
