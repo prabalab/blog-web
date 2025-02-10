@@ -35,7 +35,7 @@ app.use("/api/authdata", authRoutesdata);
 app.use("/api/usersreset", userRoutesreset);
 
 // Route to serve the main React page
-app.get("/registration", (req, res) => {
+app.get("/user-registration", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "registration.html"));
 });
 
