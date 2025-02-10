@@ -237,7 +237,7 @@
             try {
                 await axios.post("/api/usersreset/reset-password", { email, otp, newPassword });
                 alert("Password reset successful!");
-                setStep(1);
+                setStep(4);
             } catch (error) {
                 alert(error.response?.data?.message || "Error resetting password.");
             }
@@ -281,6 +281,11 @@
                         <button onClick={resetPassword}>Reset Password</button>
                     </div>
                 )}
+                  {step === 4 && (
+                      <div>
+                          <h2>Reset Password Successful. Please <a href="/login">login</a></h2>
+                      </div>
+                  )}
             </div>
         );
     }
