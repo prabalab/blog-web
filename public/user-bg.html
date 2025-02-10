@@ -134,7 +134,28 @@
 
     function Navbar() {
             const [isOpen, setIsOpen] = React.useState(false);
+       const checkTokenExpiry = () => {
+    const token = localStorage.getItem("token");
+    if (!token) return false;
 
+    try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        return payload.exp * 1000 < Date.now(); // Convert `exp` to milliseconds and compare with current time
+    } catch (error) {
+        return false; // Invalid token
+    }
+};
+
+const handleLogout = () => {
+    if (checkTokenExpiry()) {
+        alert("Session expired! Please log in again.");
+    } else {
+        alert("Logged out successfully!");
+    }
+    
+    localStorage.removeItem("token"); // Remove token
+    window.location.href = "/login"; // Redirect to login page
+};
             return (
                 <nav className="navbar">
                     <div className="logo">
@@ -154,6 +175,7 @@
                   <a href="/login">Login</a>
                   <a href="/otp-reg">Registration</a>
                   <a href="/user-blog">Write Blog</a>
+                  <a href="#" onClick={handleLogout}>Logout</a>
               </div>
                 </nav>
             );
