@@ -245,8 +245,19 @@
             );
         }
 
+        
+     // App Component
+      const App = () => {
+        return (
+          <div>
+            <Navbar />
+            <Login />
+          </div>
+        );
+      };
+
         const rootElement = document.getElementById("root");
-        ReactDOM.createRoot(rootElement).render(<Login />);
+        ReactDOM.createRoot(rootElement).render(<App />);
     </script>
 
 </body>
