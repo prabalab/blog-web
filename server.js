@@ -93,7 +93,7 @@ app.get("/blog-list-one", (req, res) => {
 });
 
 //all blogs show one by one
-app.get("/blog-one", (req, res) => {
+app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "blogone.html"));
 });
 
