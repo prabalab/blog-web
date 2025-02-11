@@ -213,7 +213,7 @@ router.post("/login", async (req, res) => {
     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
     // Generate JWT Token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "5m" });
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "2h" });
 
     res.status(200).json({ message: "Login successful", token });
   } catch (error) {
